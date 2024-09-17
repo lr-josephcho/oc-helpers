@@ -1,0 +1,2 @@
+# ignore all the workflow status JSON files
+temp/*.json
