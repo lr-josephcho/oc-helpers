@@ -1,6 +1,10 @@
 # oc-helpers
-
 Various helper scripts for notorious DsM OC. Things are always work-in-progress so use with caution!
+
+## Requirements
+- Python 3.x
+- Cadence CLI
+- Need to be on the VPN
 
 ## How I use it
 1. I initially prepare four terminal sessions, divided by `tmux`:

@@ -23,36 +23,29 @@ echo "INFO: Given LCA_ID: $lca_id"
 
 ########### Cadence Workflow Termination (add the reason if necessary)
 ## Terminate Mason Workflow (should come before terminating Audience Workflow)
-#cadence wf terminate -w mason_${lca_id} --reason "Retry"
+cadence wf terminate -w mason_${lca_id} --reason "Retry"
 
 ## Terminate Audience Workflow
-#cadence wf terminate -w audience_${lca_id} --reason "Retry"
+cadence wf terminate -w audience_${lca_id} --reason "Retry"
 
 
 
 ########### Cadence: Start Workflow Modes
 ## Skip Throttling Mode
-#cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start -wrp 1 --et 60000000 --workflow_id audience_${lca_id}  -i '{"lcaId":"'"${lca_id}"'","fromDB":true, "workflowConfigurations":[]}'
+cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start -wrp 1 --et 60000000 --workflow_id audience_${lca_id}  -i '{"lcaId":"'"${lca_id}"'","fromDB":true,"skipThrottling":true,"workflowConfigurations":[]}'
 
 ## Particular Flavor (here, it's qa-joseph)
-#cadence wf start --tl audienceworkflow-qa-joseph --wt AudienceWorkflow::start -wrp 1 --et 60000000 --workflow_id audience_${lca_id}  -i '{"lcaId":"'"${lca_id}"'","fromDB":true, "workflowConfigurations":[]}'
+#cadence wf start --tl audienceworkflow-qa-joseph --wt AudienceWorkflow::start -wrp 1 --et 60000000 --workflow_id audience_${lca_id}  -i '{"lcaId":"'"${lca_id}"'","fromDB":true,"skipThrottling":true,"workflowConfigurations":[]}'
 
 ## Skip Throttling & Skip Full Recomp Mode
-#cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start --workflow_id audience_${lca_id} -wrp 1 -et 60000000 -i '{"lcaId":"'"${lca_id}"'", "fromDB":true, "workflowConfigurations":[], "skipFullRecomps":true}'
+#cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start --workflow_id audience_${lca_id} -wrp 1 -et 60000000 -i '{"lcaId":"'"${lca_id}"'", "fromDB":true, "workflowConfigurations":[],"skipThrottling":true,"skipFullRecomps":true}'
 
 ## Skip Throttling & Controlled Batch Size Mode
-#cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start --workflow_id audience_${lca_id} -wrp 1 -et 60000000 -i '{"lcaId":"'"${lca_id}"'", "fromDB":true, "workflowConfigurations":[], "batchSizeOverride":50}'
+#cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start --workflow_id audience_${lca_id} -wrp 1 -et 60000000 -i '{"lcaId":"'"${lca_id}"'", "fromDB":true, "workflowConfigurations":[],"skipThrottling":true,"batchSizeOverride":50}'
 
 ## Skip Throttling & Skip Full Recomp & Controlled Batch Size Mode
-#cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start --workflow_id audience_${lca_id} -wrp 1 -et 60000000 -i '{"lcaId":"'"${lca_id}"'", "fromDB":true, "workflowConfigurations":[], "skipFullRecomps":true, "batchSizeOverride":100}'
-
-# You can also add "skipThrottling":true in the options part
+#cadence wf start --tl audienceworkflow --wt AudienceWorkflow::start --workflow_id audience_${lca_id} -wrp 1 -et 60000000 -i '{"lcaId":"'"${lca_id}"'", "fromDB":true, "workflowConfigurations":[],"skipThrottling":true,"skipFullRecomps":true, "batchSizeOverride":100}'
 
 
 ########### Cadence: Start Workflow From Specific Step (find the workflow's run_id and replcae it in the command below)
 #cadence wf reset -w audience_${lca_id} -r 1a27540e-5033-4bfd-a247-d1b44bfc8d52 --event_id 142 --reason "retry"
-
-
-
-########### Cadence: Signal Workflow To Skip Throttling (this is used if you want to signal already runnning workflow to skip throttling)
-cadence wf signal --workflow_id=audience_${lca_id} --name=AudienceWorkflow::signalSkipThrottling
